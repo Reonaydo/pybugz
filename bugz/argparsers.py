@@ -213,6 +213,8 @@ def make_search_parser(subparsers):
 		help='The unique alias for this bug')
 	search_parser.add_argument('-a', '--assigned-to',
 		help = 'email the bug is assigned to')
+	search_parser.add_argument('--qa-contact',
+		help = 'email of who will test the bug')
 	search_parser.add_argument('-C', '--component',
 		action='append',
 		help = 'restrict by component (1 or more)')

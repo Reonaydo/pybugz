@@ -210,7 +210,8 @@ class PrettyBugz:
 		valid_keys = ['alias', 'assigned_to', 'component', 'creator',
 			'limit', 'offset', 'op_sys', 'platform',
 			'priority', 'product', 'resolution',
-			'severity', 'status', 'version', 'whiteboard']
+			'severity', 'status', 'version', 'whiteboard',
+			'qa_contact']
 
 		search_opts = sorted([(opt, val) for opt, val in args.__dict__.items()
 			if val is not None and opt in valid_keys])
@@ -440,6 +441,7 @@ class PrettyBugz:
 		print '%-12s: %s' % ('Severity', args.severity)
 		print '%-12s: %s' % ('Alias', args.alias)
 		print '%-12s: %s' % ('Assigned to', args.assigned_to)
+		print '%-12s: %s' % ('QA', args.qa_contact)
 		print '%-12s: %s' % ('CC', args.cc)
 		print '%-12s: %s' % ('URL', args.url)
 		# fixme: groups
@@ -477,6 +479,8 @@ class PrettyBugz:
 			params['alias'] = args.alias
 		if args.assigned_to is not None:
 			params['assigned_to'] = args.assigned_to
+		if args.qa_contact is not None:
+			params['qa_contact'] = args.qa_contact
 		if args.cc is not None:
 			params['cc'] = args.cc
 		if args.url is not None:
@@ -681,6 +685,7 @@ class PrettyBugz:
 		FIELDS = (
 			('summary', 'Title'),
 			('assigned_to', 'Assignee'),
+			('qa_contact', 'QA'),
 			('creation_time', 'Reported'),
 			('last_change_time', 'Updated'),
 			('status', 'Status'),
