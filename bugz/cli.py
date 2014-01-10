@@ -608,8 +608,7 @@ class PrettyBugz:
 		action = {True:'Viewing', False:'Saving'}
 		log_info('%s attachment: "%s"' %
 			(action[args.view], result['file_name']))
-		safe_filename = os.path.basename(re.sub(r'\.\.', '',
-												result['file_name']))
+		safe_filename = os.path.basename(re.sub(r'\.\.', '', result['file_name']))
 
 		if args.view:
 			print result['data'].data
@@ -659,16 +658,24 @@ class PrettyBugz:
 		log_info("'%s' has been attached to bug %s" % (filename, bugid))
 
 	def listbugs(self, buglist, show_status=False):
+		FIELDS = (
+			('id', 'Id', '%5s', lambda(s) : s),
+			('priority', 'PRI', '%-4s', lambda(s) : s),
+			('status', 'Status', '%-10s', lambda(s) : s),
+			('severity', 'Severity', '%-15s', lambda(s) : s),
+			('assigned_to', 'Assigned', '%-10s', lambda(s) : str.split(s, "@")[0]),
+			('qa_contact', 'QA', '%-20s', lambda(s) : str.split(s, "@")[0]),
+			('summary', 'Summary', '%s', lambda(s) : s),
+		)
+
+		line = ''
+		for field in FIELDS:
+			line = ('%s ' + field[2]) % (line, field[1])
+		print line
 		for bug in buglist:
-			bugid = bug['id']
-			status = bug['status']
-			assignee = bug['assigned_to'].split('@')[0]
-			desc = bug['summary']
-			line = '%s' % (bugid)
-			if show_status:
-				line = '%s %s' % (line, status)
-			line = '%s %-20s' % (line, assignee)
-			line = '%s %s' % (line, desc)
+			line = ''
+			for field in FIELDS:
+				line = ('%s ' + field[2]) % (line, field[3](bug[field[0]]))
 
 			try:
 				print line.encode(self.enc)[:self.columns]
