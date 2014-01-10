@@ -42,6 +42,7 @@ def log_setDebugLevel(newLevel):
 		debugLevel = newLevel
 
 def formatOut(msg, id='!'):
+	msg = msg.encode("utf-8")
 	lines = str(msg).split('\n')
 	start = True
 	sym=LogSettings[id]['sym']
