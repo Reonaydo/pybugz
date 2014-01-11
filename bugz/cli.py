@@ -19,6 +19,7 @@ except ImportError:
 from bugz.bugzilla import BugzillaProxy
 from bugz.errhandling import BugzError
 from bugz.log import log_info
+from tree import Tree
 
 BUGZ_COMMENT_TEMPLATE = \
 """
@@ -118,6 +119,24 @@ def block_edit(comment, comment_from = ''):
 		return new_text
 	else:
 		return ''
+
+def bugcmp(b1, b2):
+	severity_importance = {
+		'blocker' : 0,
+		'critical' : 1,
+		'major' : 2,
+		'normal' : 3,
+		'minimal' : 4,
+		'trivial' : 5,
+		'enhancement' : 6,
+	}
+	if b1['priority'] > b2['priority']:
+		return 1
+	if b1['priority'] < b2['priority']:
+		return -1
+	i1 = severity_importance[b1['severity']]
+	i2 = severity_importance[b2['severity']]
+	return i1 - i2
 
 class PrettyBugz:
 	def __init__(self, args):
@@ -251,6 +270,70 @@ class PrettyBugz:
 			log_info('No bugs found.')
 		else:
 			self.listbugs(result, args.show_status)
+
+	def addblock(self, allbug, bug, res):
+		for block in bug['blocks']:
+			if block in allbug:
+				res.append(block)
+				self.addblock(allbug, allbug[block], res)
+
+	def my(self, args):
+		params = {}
+		params['assigned_to'] = self.user
+		params['status'] = ['NEW', 'REOPENED', 'ASSIGNED']
+		result = self.bzcall(self.bz.Bug.search, params)['bugs']
+		# for bug in result:
+		# 	for key in bug:
+		# 		print key
+		# 	break
+
+		by_product = {}
+		by_id = {}
+		class MyBug(dict):
+			def __init__(self, b):
+				for i in b:
+					self[i] = b[i]
+			def __str__(self):
+				res = ""
+				res += str(self['priority']) + " "
+				res += str(self['id']) + " "
+				res += str(self['estimated_time']) + " "
+				res += str(self['severity'][:3]) + " "
+				res += str(self['summary'].encode('utf-8')) + " "
+				res += str(self['blocks']) + " "
+				#res += str(self['blocklist']) + " "
+				return res
+			def __repr__(self):
+				return self.__str__()
+			def isEqual(self, b):
+				return self['id'] == b['id']
+			def isAbove(self, b):
+				return self['id'] in b['blocklist']
+			def Update(self, b):
+				return
+		mybugs = []
+		for bug in result:
+			mybugs.append(MyBug(bug))
+		result = None
+		for bug in mybugs:
+			by_product.setdefault(bug['product'], [])
+			by_product[bug['product']].append(bug)
+			by_id[bug['id']] = bug
+		for bug in mybugs:
+			res = []
+			self.addblock(by_id, bug, res)
+			bug['blocklist'] = res
+
+		for product in by_product:
+			print product
+			bugtree = Tree()
+			#by_product[product] = sorted(by_product[product], cmp=bugcmp)
+			for bug in sorted(by_product[product], cmp=bugcmp):
+				bugtree.insert(bug)
+			bugtree.Echo()
+			#for bug in tree:
+			#	print bug['estimated_time'], bug['priority'], bug['severity'], bug['id'], bug['blocks'], bug['depends_on'], bug['summary']
+			print
 
 	def get(self, args):
 		""" Fetch bug details given the bug id """

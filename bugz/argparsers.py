@@ -51,7 +51,10 @@ def make_get_parser(subparsers):
 		help = 'do not show comments',
 		dest = 'comments')
 	get_parser.set_defaults(func = PrettyBugz.get)
-
+def make_my_parser(subparsers):
+	get_parser = subparsers.add_parser('my',
+		help = 'get all my bugs from bugzilla in hierarchy view')
+	get_parser.set_defaults(func = PrettyBugz.my)
 def make_login_parser(subparsers):
 	login_parser = subparsers.add_parser('login',
 		help = 'log into bugzilla')
@@ -294,6 +297,7 @@ def make_parser():
 	make_attach_parser(subparsers)
 	make_attachment_parser(subparsers)
 	make_get_parser(subparsers)
+	make_my_parser(subparsers)
 	make_login_parser(subparsers)
 	make_logout_parser(subparsers)
 	make_modify_parser(subparsers)
