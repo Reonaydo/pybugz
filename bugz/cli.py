@@ -126,7 +126,7 @@ def bugcmp(b1, b2):
 		'critical' : 1,
 		'major' : 2,
 		'normal' : 3,
-		'minimal' : 4,
+		'minor' : 4,
 		'trivial' : 5,
 		'enhancement' : 6,
 	}
