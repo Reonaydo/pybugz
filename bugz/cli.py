@@ -286,6 +286,14 @@ class PrettyBugz:
 		# 	for key in bug:
 		# 		print key
 		# 	break
+		ids = set()
+		block_ids = set()
+		for bug in result:
+			ids.add(bug['id'])
+			for blockbug in bug['blocks']:
+				block_ids.add(blockbug)
+		missed_block_ids = block_ids - ids
+		result.extend(self.bzcall(self.bz.Bug.get, {'ids':list(missed_block_ids)})['bugs'])
 
 		by_product = {}
 		by_id = {}
