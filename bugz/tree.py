@@ -31,6 +31,8 @@ class Tree:
 			self.elem = elem
 			self.left = t
 			
+			if self.right is None:
+				return
 			el = []
 			self.right.elements(el)
 			self.right = None
