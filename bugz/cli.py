@@ -260,7 +260,7 @@ class PrettyBugz:
 			log_info(log_msg)
 
 		if not 'status' in params.keys():
-			params['status'] = ['CONFIRMED', 'IN_PROGRESS', 'UNCONFIRMED']
+			params['status'] = ['NEW', 'ASSIGNED', 'REOPENED']
 		elif 'ALL' in params['status']:
 			del params['status']
 
@@ -269,7 +269,11 @@ class PrettyBugz:
 		if not len(result):
 			log_info('No bugs found.')
 		else:
-			self.listbugs(result, args.show_status)
+			if args.tree:
+				self.add_missed_blocking(result)
+				self.show(result)
+			else:
+				self.listbugs(result, args.show_status)
 
 	def addblock(self, allbug, bug, res):
 		for block in bug['blocks']:
@@ -282,10 +286,10 @@ class PrettyBugz:
 		params['assigned_to'] = self.user
 		params['status'] = ['NEW', 'REOPENED', 'ASSIGNED']
 		result = self.bzcall(self.bz.Bug.search, params)['bugs']
-		# for bug in result:
-		# 	for key in bug:
-		# 		print key
-		# 	break
+		self.add_missed_blocking(result)
+		self.show(result)
+
+	def add_missed_blocking(self, result):
 		ids = set()
 		block_ids = set()
 		for bug in result:
@@ -295,6 +299,8 @@ class PrettyBugz:
 		missed_block_ids = block_ids - ids
 		result.extend(self.bzcall(self.bz.Bug.get, {'ids':list(missed_block_ids)})['bugs'])
 
+		
+	def show(self, result):
 		by_product = {}
 		by_id = {}
 		class MyBug(dict):
@@ -323,16 +329,18 @@ class PrettyBugz:
 		for bug in result:
 			mybugs.append(MyBug(bug))
 		result = None
+
 		for bug in mybugs:
 			by_product.setdefault(bug['product'], [])
 			by_product[bug['product']].append(bug)
 			by_id[bug['id']] = bug
+
 		for bug in mybugs:
 			res = []
 			self.addblock(by_id, bug, res)
 			bug['blocklist'] = res
-
 		for product in by_product:
+			print
 			print product
 			bugtree = Tree()
 			#by_product[product] = sorted(by_product[product], cmp=bugcmp)
@@ -341,7 +349,6 @@ class PrettyBugz:
 			bugtree.Echo()
 			#for bug in tree:
 			#	print bug['estimated_time'], bug['priority'], bug['severity'], bug['id'], bug['blocks'], bug['depends_on'], bug['summary']
-			print
 
 	def get(self, args):
 		""" Fetch bug details given the bug id """

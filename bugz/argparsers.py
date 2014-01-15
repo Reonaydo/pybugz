@@ -257,6 +257,9 @@ def make_search_parser(subparsers):
 	search_parser.add_argument('--show-status',
 		action = 'store_true',
 		help='show status of bugs')
+	search_parser.add_argument('--tree',
+		action = 'store_true',
+		help='show tree view')
 	search_parser.set_defaults(func = PrettyBugz.search)
 
 def make_parser():
