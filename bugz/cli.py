@@ -10,6 +10,7 @@ import sys
 import tempfile
 import textwrap
 import xmlrpclib
+from datetime import date, datetime, timedelta
 
 try:
 	import readline
@@ -120,16 +121,16 @@ def block_edit(comment, comment_from = ''):
 	else:
 		return ''
 
+severity_importance = {
+	'blocker': 1,
+	'critical': 3,
+	'major': 31,
+	'normal': 62,
+	'minor': 92,
+	'trivial':123,
+	'enhancement':356
+}
 def bugcmp(b1, b2):
-	severity_importance = {
-		'blocker' : 0,
-		'critical' : 1,
-		'major' : 2,
-		'normal' : 3,
-		'minor' : 4,
-		'trivial' : 5,
-		'enhancement' : 6,
-	}
 	if b1['priority'] > b2['priority']:
 		return 1
 	if b1['priority'] < b2['priority']:
@@ -309,12 +310,19 @@ class PrettyBugz:
 					self[i] = b[i]
 			def __str__(self):
 				res = ""
+
 				res += str(self['priority']) + " "
 				res += str(self['id']) + " "
 				res += str(self['estimated_time']) + " "
+				res += str(self['status'][:3]) + " "
 				res += str(self['severity'][:3]) + " "
 				res += str(self['summary'].encode('utf-8')) + " "
 				res += str(self['blocks']) + " "
+				creat = datetime.strptime(str(self['creation_time']).split('T')[0], "%Y%m%d").date()
+				creat += timedelta(days=severity_importance[self['severity']])
+				if self['severity'] != "enhancement":
+					res += str((creat - date.today()).days)
+				
 				#res += str(self['blocklist']) + " "
 				return res
 			def __repr__(self):
