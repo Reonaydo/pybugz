@@ -311,7 +311,10 @@ class PrettyBugz:
 			for blockbug in bug['blocks']:
 				block_ids.add(blockbug)
 		missed_block_ids = block_ids - ids
-		result.extend(self.bzcall(self.bz.Bug.get, {'ids':list(missed_block_ids)})['bugs'])
+		missed_bugs = self.bzcall(self.bz.Bug.get, {'ids':list(missed_block_ids)})['bugs']
+		for bug in missed_bugs:
+			bug['notmybug'] = True
+		result.extend(missed_bugs)
 
 		
 	def show(self, result):
@@ -323,9 +326,10 @@ class PrettyBugz:
 					self[i] = b[i]
 			def __str__(self):
 				res = ""
-
-				res += str(self['priority']) + " "
+				if 'notmybug' in self:
+					res = '\033[33m'
 				res += str(self['id']) + " "
+				res += str(self['priority']) + " "
 				res += str(self['estimated_time']) + " "
 				res += str(self['status'][:3]) + " "
 				res += str(self['severity'][:3]) + " "
@@ -335,6 +339,9 @@ class PrettyBugz:
 				creat += timedelta(days=severity_importance[self['severity']])
 				if self['severity'] != "enhancement":
 					res += str((creat - date.today()).days)
+				if 'notmybug' in self:
+					res += '\033[0m'
+
 				
 				#res += str(self['blocklist']) + " "
 				return res
