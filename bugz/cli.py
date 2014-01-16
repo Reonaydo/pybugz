@@ -283,13 +283,26 @@ class PrettyBugz:
 				self.addblock(allbug, allbug[block], res)
 
 	def my(self, args):
+		self.assigned()
+		self.unverified()
+	def assigned(self):
 		params = {}
 		params['assigned_to'] = self.user
 		params['status'] = ['NEW', 'REOPENED', 'ASSIGNED']
 		result = self.bzcall(self.bz.Bug.search, params)['bugs']
 		self.add_missed_blocking(result)
-		self.show(result)
-
+		if len(result) > 0:
+			print "Assigned to me and blocked"
+			self.show(result)
+	def unverified(self):
+		params = {}
+		params['qa_contact'] = self.user
+		params['status'] = ['RESOLVED']
+		result = self.bzcall(self.bz.Bug.search, params)['bugs']
+		self.add_missed_blocking(result)
+		if len(result) > 0:
+			print "To verify and blocked"
+			self.show(result)
 	def add_missed_blocking(self, result):
 		ids = set()
 		block_ids = set()
@@ -348,13 +361,13 @@ class PrettyBugz:
 			self.addblock(by_id, bug, res)
 			bug['blocklist'] = res
 		for product in by_product:
-			print
 			print product
 			bugtree = Tree()
 			#by_product[product] = sorted(by_product[product], cmp=bugcmp)
 			for bug in sorted(by_product[product], cmp=bugcmp):
 				bugtree.insert(bug)
 			bugtree.Echo()
+			print
 			#for bug in tree:
 			#	print bug['estimated_time'], bug['priority'], bug['severity'], bug['id'], bug['blocks'], bug['depends_on'], bug['summary']
 
