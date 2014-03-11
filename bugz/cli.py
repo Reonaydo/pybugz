@@ -350,7 +350,10 @@ class PrettyBugz:
 			def isEqual(self, b):
 				return self['id'] == b['id']
 			def isAbove(self, b):
-				return self['id'] in b['blocklist']
+				is_above = self['id'] in b['blocklist']
+				if is_above:
+					self['estimated_time'] += b['estimated_time']
+				return is_above
 			def Update(self, b):
 				return
 		mybugs = []
