@@ -69,5 +69,17 @@ class Tree:
 			self.left.elements(elems)
 		if self.right is not None:
 			self.right.elements(elems)
+	def calcestimate(self, top=False):
+		if self.left is not None:
+			child = self.left
+			while True:
+				child.calcestimate()
+				self.elem['estimated_time'] += child.elem['estimated_time']
+				if child.right is None:
+					break
+				child = child.right
+		if top and self.right is not None:
+			self.right.calcestimate(True)
+
 if __name__ == '__main__':
 	main()

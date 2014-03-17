@@ -341,8 +341,6 @@ class PrettyBugz:
 					res += str((creat - date.today()).days)
 				if 'notmybug' in self:
 					res += '\033[0m'
-
-				
 				#res += str(self['blocklist']) + " "
 				return res
 			def __repr__(self):
@@ -350,10 +348,7 @@ class PrettyBugz:
 			def isEqual(self, b):
 				return self['id'] == b['id']
 			def isAbove(self, b):
-				is_above = self['id'] in b['blocklist']
-				if is_above:
-					self['estimated_time'] += b['estimated_time']
-				return is_above
+				return self['id'] in b['blocklist']
 			def Update(self, b):
 				return
 		mybugs = []
@@ -376,6 +371,7 @@ class PrettyBugz:
 			#by_product[product] = sorted(by_product[product], cmp=bugcmp)
 			for bug in sorted(by_product[product], cmp=bugcmp):
 				bugtree.insert(bug)
+			bugtree.calcestimate(True)
 			bugtree.Echo()
 			print
 			#for bug in tree:
