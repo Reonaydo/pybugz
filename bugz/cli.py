@@ -840,7 +840,7 @@ class PrettyBugz:
 						continue
 			except AttributeError:
 				continue
-			print '%-12s: %s' % (name, value)
+			print ('%-12s: %s' % (name, value)).encode(self.enc)
 
 		# print keywords
 		k = ', '.join(bug['keywords'])
