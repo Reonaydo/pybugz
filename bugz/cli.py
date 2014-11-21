@@ -320,7 +320,7 @@ class PrettyBugz:
 	def show(self, result):
 		by_product = {}
 		by_id = {}
-		class MyBug(dict):
+		class TreeBug(dict):
 			def __init__(self, b):
 				for i in b:
 					self[i] = b[i]
@@ -343,17 +343,42 @@ class PrettyBugz:
 					res += '\033[0m'
 				#res += str(self['blocklist']) + " "
 				return res
-			def __repr__(self):
-				return self.__str__()
-			def isEqual(self, b):
+
+			def equals(self, b):
 				return self['id'] == b['id']
-			def isAbove(self, b):
+			def is_above(self, b):
+				return self.is_parent_of(b)
+			def is_parent_of(self, b):
 				return self['id'] in b['blocklist']
-			def Update(self, b):
-				return
+			def update(self, b):
+				pass
+		class Walker(object):
+			def __init__(self):
+				self.parents = []
+			def _update_parents(self, bug):
+				while len(self.parents):
+					parent = self.parents[-1]
+					self.parents = self.parents[:-1]
+					if parent.is_parent_of(bug):
+						self.parents.append(parent)
+						break
+		class TreePrinter(Walker):
+			def __call__(self, bug):
+				self._update_parents(bug)
+				print '{} {}'.format('  ' * len(self.parents), str(bug))
+				self.parents.append(bug)
+				return True;
+		class TreeEstimator(Walker):
+			def __call__(self, bug):
+				self._update_parents(bug)
+				for parent in self.parents:
+					parent['estimated_time'] += bug['estimated_time']
+				self.parents.append(bug)
+				return True;
+
 		mybugs = []
 		for bug in result:
-			mybugs.append(MyBug(bug))
+			mybugs.append(TreeBug(bug))
 		result = None
 
 		for bug in mybugs:
@@ -371,8 +396,8 @@ class PrettyBugz:
 			#by_product[product] = sorted(by_product[product], cmp=bugcmp)
 			for bug in sorted(by_product[product], cmp=bugcmp):
 				bugtree.insert(bug)
-			bugtree.calcestimate(True)
-			bugtree.Echo()
+			bugtree.walk(TreeEstimator())
+			bugtree.walk(TreePrinter())
 			print
 			#for bug in tree:
 			#	print bug['estimated_time'], bug['priority'], bug['severity'], bug['id'], bug['blocks'], bug['depends_on'], bug['summary']

@@ -18,12 +18,10 @@ class Tree:
 		if self.elem is None:
 			self.elem = elem
 			return
-		if elem.isEqual(self.elem):
+		if elem.equals(self.elem):
 			self.elem.Update(elem)
 			return
-		if elem.isAbove(self.elem):
-			if DEBUG:
-				print "%s is above than %s" %(str(elem), str(self.elem))
+		if elem.is_above(self.elem):
 			t = Tree()
 			t.elem = self.elem
 			t.left = self.left
@@ -40,27 +38,23 @@ class Tree:
 				self.insert(e)
 
 			return
-		if self.elem.isAbove(elem):
-			if DEBUG:
-				print "insert %s to left of %s" %(str(elem), str(self.elem))
+		if self.elem.is_above(elem):
 			if self.left is None:
 				self.left = Tree()
 			self.left.insert(elem)
 			return
 		if self.right is None:
 			self.right = Tree()
-		if DEBUG:
-			print "insert %s to right of %s" %(str(elem), str(self.elem))
 		self.right.insert(elem)
 		return
-	def Echo(self):
-		self.EchoIndent(0)
-	def EchoIndent(self, indent):
-		print '  ' * indent + str(self.elem)
-		if self.left is not None:
-			self.left.EchoIndent(indent + 1)
+	def walk(self, walker):
+		if self.elem is None:
+			return
+		should_go_in_childs = walker(self.elem)
+		if should_go_in_childs and self.left is not None:
+			self.left.walk(walker)
 		if self.right is not None:
-			self.right.EchoIndent(indent)
+			self.right.walk(walker)
 	def elements(self, elems):
 		if self.elem is None:
 			return
@@ -69,17 +63,6 @@ class Tree:
 			self.left.elements(elems)
 		if self.right is not None:
 			self.right.elements(elems)
-	def calcestimate(self, top=False):
-		if self.left is not None:
-			child = self.left
-			while True:
-				child.calcestimate()
-				self.elem['estimated_time'] += child.elem['estimated_time']
-				if child.right is None:
-					break
-				child = child.right
-		if top and self.right is not None:
-			self.right.calcestimate(True)
 
 if __name__ == '__main__':
 	main()
