@@ -231,7 +231,7 @@ class PrettyBugz:
 			'limit', 'offset', 'op_sys', 'platform',
 			'priority', 'product', 'resolution',
 			'severity', 'status', 'version', 'whiteboard',
-			'qa_contact']
+			'qa_contact', 'cf_branch']
 
 		search_opts = sorted([(opt, val) for opt, val in args.__dict__.items()
 			if val is not None and opt in valid_keys])
@@ -631,6 +631,8 @@ class PrettyBugz:
 			params['assigned_to'] = args.assigned_to
 		if args.qa_contact is not None:
 			params['qa_contact'] = args.qa_contact
+		if args.cf_branch is not None:
+			params['cf_branch'] = args.cf_branch
 		if args.cc is not None:
 			params['cc'] = args.cc
 		if args.url is not None:
