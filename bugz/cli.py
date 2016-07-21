@@ -274,7 +274,7 @@ class PrettyBugz:
 				self.add_missed_blocking(result)
 				self.show(result)
 			else:
-				self.listbugs(result, args.show_status)
+				self.listbugs(result, args.show_status, args.show_branch)
 
 	def addblock(self, allbug, bug, res):
 		for block in bug['blocks']:
@@ -813,16 +813,22 @@ class PrettyBugz:
 		result =  self.bzcall(self.bz.Bug.add_attachment, params)
 		log_info("'%s' has been attached to bug %s" % (filename, bugid))
 
-	def listbugs(self, buglist, show_status=False):
-		FIELDS = (
-			('id', 'Id', '%5s', lambda(s) : s),
-			('priority', 'PRI', '%-4s', lambda(s) : s),
-			('status', 'Status', '%-10s', lambda(s) : s),
-			('severity', 'Severity', '%-15s', lambda(s) : s),
-			('assigned_to', 'Assigned', '%-10s', lambda(s) : str.split(s, "@")[0]),
-			('qa_contact', 'QA', '%-20s', lambda(s) : str.split(s, "@")[0]),
-			('summary', 'Summary', '%s', lambda(s) : s),
-		)
+	def listbugs(self, buglist, show_status=False, show_branch=False):
+		if show_branch:
+			FIELDS = (
+				('id', 'Id', '%5s', lambda(s) : s),
+				('cf_branch', 'Branch', '%s', lambda(s) : s),
+			)
+		else:
+			FIELDS = (
+				('id', 'Id', '%5s', lambda(s) : s),
+				('priority', 'PRI', '%-4s', lambda(s) : s),
+				('status', 'Status', '%-10s', lambda(s) : s),
+				('severity', 'Severity', '%-15s', lambda(s) : s),
+				('assigned_to', 'Assigned', '%-10s', lambda(s) : str.split(s, "@")[0]),
+				('qa_contact', 'QA', '%-20s', lambda(s) : str.split(s, "@")[0]),
+				('summary', 'Summary', '%s', lambda(s) : s),
+			)
 
 		line = ''
 		for field in FIELDS:

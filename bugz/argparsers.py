@@ -259,6 +259,9 @@ def make_search_parser(subparsers):
 	search_parser.add_argument('--show-status',
 		action = 'store_true',
 		help='show status of bugs')
+	search_parser.add_argument('--show-branch',
+		action = 'store_true',
+		help='show branch of bugs')
 	search_parser.add_argument('--tree',
 		action = 'store_true',
 		help='show tree view')
