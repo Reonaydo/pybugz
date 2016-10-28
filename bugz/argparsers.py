@@ -218,8 +218,8 @@ def make_search_parser(subparsers):
 		help = 'email the bug is assigned to')
 	search_parser.add_argument('--cf_branch',
 		help = 'branch in which the bug is resolved')
-	search_parser.add_argument('--cf_noautotest',
-		help = 'cf_noautest params')
+	search_parser.add_argument('--cf_autotest',
+		help = 'cf_autest params')
 	search_parser.add_argument('--qa-contact',
 		help = 'email of who will test the bug')
 	search_parser.add_argument('-C', '--component',
