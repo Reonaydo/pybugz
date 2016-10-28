@@ -231,7 +231,7 @@ class PrettyBugz:
 			'limit', 'offset', 'op_sys', 'platform',
 			'priority', 'product', 'resolution',
 			'severity', 'status', 'version', 'whiteboard',
-			'qa_contact', 'cf_branch']
+			'qa_contact', 'cf_branch', 'cf_noautotest']
 
 		search_opts = sorted([(opt, val) for opt, val in args.__dict__.items()
 			if val is not None and opt in valid_keys])
@@ -933,3 +933,4 @@ class PrettyBugz:
 							print shortline.encode(self.enc)
 				i += 1
 			print
+# vim: noexpandtab
