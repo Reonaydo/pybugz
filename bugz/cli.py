@@ -274,7 +274,7 @@ class PrettyBugz:
 				self.add_missed_blocking(result)
 				self.show(result)
 			else:
-				self.listbugs(result, args.show_status, args.show_branch)
+				self.listbugs(result, args.show_status, args.show_branch, args.show_teststatus)
 
 	def addblock(self, allbug, bug, res):
 		for block in bug['blocks']:
@@ -815,11 +815,16 @@ class PrettyBugz:
 		result =  self.bzcall(self.bz.Bug.add_attachment, params)
 		log_info("'%s' has been attached to bug %s" % (filename, bugid))
 
-	def listbugs(self, buglist, show_status=False, show_branch=False):
+	def listbugs(self, buglist, show_status=False, show_branch=False, show_teststatus=False):
 		if show_branch:
 			FIELDS = (
 				('id', 'Id', '%5s', lambda(s) : s),
 				('cf_branch', 'Branch', '%s', lambda(s) : s),
+			)
+		elif show_teststatus:
+			FIELDS = (
+				('id', 'Id', '%5s', lambda(s) : s),
+				('cf_autotest', 'TestStatus', '%s', lambda(s) : s),
 			)
 		else:
 			FIELDS = (
