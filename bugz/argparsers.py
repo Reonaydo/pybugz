@@ -161,6 +161,8 @@ def make_modify_parser(subparsers):
 	modify_parser.add_argument('--invalid',
 		action='store_true',
 		help = 'mark bug as RESOLVED, INVALID')
+	modify_parser.add_argument('--cf_autotest',
+		help='set new autotest_status of bug (eg. PASSED)')
 	modify_parser.set_defaults(func = PrettyBugz.modify)
 
 def make_post_parser(subparsers):

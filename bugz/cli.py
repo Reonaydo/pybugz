@@ -730,6 +730,8 @@ class PrettyBugz:
 			params['version'] = args.version
 		if args.whiteboard is not None:
 			params['whiteboard'] = args.whiteboard
+		if args.cf_autotest is not None:
+			params['cf_autotest'] = args.cf_autotest
 
 		if args.fixed:
 			params['status'] = 'RESOLVED'
