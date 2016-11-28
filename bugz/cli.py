@@ -231,7 +231,7 @@ class PrettyBugz:
 			'limit', 'offset', 'op_sys', 'platform',
 			'priority', 'product', 'resolution',
 			'severity', 'status', 'version', 'whiteboard',
-			'qa_contact', 'cf_branch', 'cf_autotest']
+			'qa_contact', 'cf_branch', 'cf_core_branch', 'cf_autotest']
 
 		search_opts = sorted([(opt, val) for opt, val in args.__dict__.items()
 			if val is not None and opt in valid_keys])
@@ -276,7 +276,7 @@ class PrettyBugz:
 				self.add_missed_blocking(result)
 				self.show(result)
 			else:
-				self.listbugs(result, args.show_status, args.show_branch, args.show_teststatus)
+				self.listbugs(result, args.show_status, args.show_branch, args.show_teststatus, args.show_core_branch)
 
 	def addblock(self, allbug, bug, res):
 		for block in bug['blocks']:
@@ -635,6 +635,8 @@ class PrettyBugz:
 			params['qa_contact'] = args.qa_contact
 		if args.cf_branch is not None:
 			params['cf_branch'] = args.cf_branch
+		if args.cf_branch is not None:
+			params['cf_core_branch'] = args.cf_core_branch
 		if args.cc is not None:
 			params['cc'] = args.cc
 		if args.url is not None:
@@ -817,11 +819,16 @@ class PrettyBugz:
 		result =  self.bzcall(self.bz.Bug.add_attachment, params)
 		log_info("'%s' has been attached to bug %s" % (filename, bugid))
 
-	def listbugs(self, buglist, show_status=False, show_branch=False, show_teststatus=False):
+	def listbugs(self, buglist, show_status=False, show_branch=False, show_teststatus=False, show_core_branch=False):
 		if show_branch:
 			FIELDS = (
 				('id', 'Id', '%5s', lambda(s) : s),
 				('cf_branch', 'Branch', '%s', lambda(s) : s),
+			)
+		elif show_core_branch:
+			FIELDS = (
+				('id', 'Id', '%5s', lambda(s) : s),
+				('cf_core_branch', 'CoreBranch', '%s', lambda(s) : s),
 			)
 		elif show_teststatus:
 			FIELDS = (
