@@ -822,7 +822,6 @@ class PrettyBugz:
 			FIELDS = (
 				('id', 'Id', '%5s', lambda(s) : s),
 				('cf_branch', 'Branch', '%s', lambda(s) : s),
-				('cf_core_branch', 'CoreBranch', '%s', lambda (s): s),
 			)
 		elif show_teststatus:
 			FIELDS = (
