@@ -265,7 +265,7 @@ class PrettyBugz:
 		elif 'ALL' in params['status']:
 			del params['status']
 		elif 'FORAUTOTEST' in params['status']:
-			params['status'] = ['RESOLVED', 'NEEDMERGE']
+			params['status'] = ['RESOLVED', 'NEEDMERGE', 'TESTING']
 
 		result = self.bzcall(self.bz.Bug.search, params)['bugs']
 
