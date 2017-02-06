@@ -267,6 +267,13 @@ class PrettyBugz:
 		elif 'FORAUTOTEST' in params['status']:
 			params['status'] = ['RESOLVED', 'NEEDMERGE', 'TESTING']
 
+		if 'VMmanager-KVM' in params['product']:
+			params['product'] = ['VMmanager']
+			params['version'] = ['KVM', 'Cloud']
+		elif 'VMmanager-OVZ' in params['product']:
+			params['product'] = ['Vmmanager']
+			params['version'] = ['OVZ']
+
 		result = self.bzcall(self.bz.Bug.search, params)['bugs']
 
 		if not len(result):
