@@ -267,7 +267,9 @@ class PrettyBugz:
 		elif 'FORAUTOTEST' in params['status']:
 			params['status'] = ['RESOLVED', 'NEEDMERGE', 'TESTING']
 
-		if 'VMmanager-KVM' in params['product']:
+		if not 'product' in params.keys():
+			pass
+		elif 'VMmanager-KVM' in params['product']:
 			params['product'] = ['VMmanager']
 			params['version'] = ['KVM', 'Cloud']
 		elif 'VMmanager-OVZ' in params['product']:
